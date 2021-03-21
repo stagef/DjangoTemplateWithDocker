@@ -1,3 +1,5 @@
+from os import environ
+
 
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {
@@ -13,7 +15,7 @@ SWAGGER_SETTINGS = {
         'Api-Key': {
             'type': 'apiKey',
             'name': 'Authorization',
-            'description': 'Value example: <API_KEY_HEADER> <API_KEY>',
+            'description': f'Value example: {environ.get("API_KEY_HEADER", "<API_KEY_HEADER>")} <API_KEY>',
             'in': 'header'
         },
         'Language': {
