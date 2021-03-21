@@ -1,0 +1,34 @@
+stages:
+  - build
+  - deploy
+  - test
+
+job build:
+  stage: build
+  when: manual
+  script:
+    - echo "Build started"
+    - docker-compose build --progress plain
+    - echo "Build successed"
+  only:
+    - /^develop$/
+
+job deploy:
+  stage: deploy
+  when: manual
+  script:
+    - echo "Deploy started"
+    - docker-compose up -d
+    - echo "Deploy successed"
+  only:
+    - /^develop$/
+
+job run unit tests:
+  stage: test
+  when: manual
+  script:
+    - echo "Testing started"
+    - docker-compose exec web python manage.py test
+    - echo "Testing successed"
+  only:
+    - /^develop$/
