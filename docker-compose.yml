@@ -58,23 +58,6 @@ services:
       interval: 1m20s
       timeout: 5s
       retries: 3
-  celery:
-    build:
-      context: .
-      dockerfile: docker/dev/web/Dockerfile
-    command: celery -A src worker -l info -Q celery
-    volumes:
-      - ./web/:/usr/src/web/
-    env_file:
-      - docker/dev/env/.env
-      - docker/dev/env/.db.env
-      - docker/prod/env/.data.env
-    depends_on:
-      redis:
-        condition: service_started
-    restart: always
-    networks:
-      - separated_network
 
 
 volumes:

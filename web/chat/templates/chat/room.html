@@ -1,0 +1,108 @@
+<!-- chat/templates/chat/room.html -->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Desk Room</title>
+</head>
+
+<body>
+    <canvas id="canvas" width="800" height="400" style="display: block;"></canvas>
+    {{ room_name|json_script:"room-name" }}
+    <style>
+        canvas {
+            border: 2px solid #ccc;
+        }
+    </style>
+    <script>
+        var canvas = document.getElementById("canvas");
+        var ctx = canvas.getContext('2d');
+        // canvas.width = 1100;
+        // canvas.height = 600;
+        var x, y;
+
+        function drawii(event, x, y) {
+            // ctx.lineWidth = 6;
+            // ctx.lineCap = 'round';
+
+            // ctx.lineTo(x, y);
+            // ctx.stroke();
+            // ctx.beginPath();
+            // ctx.moveTo(x, y);
+            
+            
+            ctx.lineTo(x,y);
+            ctx.stroke();
+            
+            ctx.moveTo(x,y);
+            
+        }
+
+        window.onload = function () {
+            const roomName = JSON.parse(document.getElementById('room-name').textContent);
+
+            const chatSocket = new WebSocket(
+                'ws://'
+                + window.location.host
+                + '/ws/chat/'
+                + roomName
+                + '/'
+            );
+
+            chatSocket.onopen = function (event) {
+                console.log("соединение установлено");
+            }
+
+            chatSocket.onmessage = function (e) {
+                const dataa = JSON.parse(e.data);
+                var imgg = dataa.message;
+                var pixelsArray = imgg;
+                drawii(event, pixelsArray[0], pixelsArray[1]);
+            };
+
+            chatSocket.onclose = function (e) {
+                console.error('Chat socket closed unexpectedly');
+            };
+
+            function waitForSocketConnection(chatSocket, callback) {
+                setTimeout(
+                    function () {
+                        if (chatSocket.readyState === 1) {
+                            if (callback !== undefined) {
+                                callback();
+                            }
+                            return;
+                        } else {
+                            waitForSocketConnection(chatSocket, callback);
+                        }
+                    }, 2);
+            };
+
+
+            waitForSocketConnection(chatSocket, function () {
+                function dell() {
+                    canvas.removeEventListener('mousemove', movetop);
+                    ctx.beginPath();
+                }
+                function movetop(event) {
+                        x = event.clientX;
+                        y = event.clientY;
+                        var array = [x, y];
+                        var message = array;
+                        chatSocket.send(JSON.stringify({
+                            'message': message
+                        }));
+                    }
+                canvas.addEventListener('mousedown', function (event) {
+                    ctx.beginPath();
+                    canvas.addEventListener('mouseup', dell);
+                    canvas.addEventListener('mousemove', movetop);
+                });
+         
+            });
+        }
+    </script>
+</body>
+
+</html>

@@ -13,6 +13,7 @@ urlpatterns = [
     path(f'{admin_url}/defender/', include('defender.urls')),
     path('api/', include('rest_framework.urls')),
     path('rosetta/', include('rosetta.urls')),
+    path('chat/', include('chat.urls')),
 ]
 
 urlpatterns += swagger_url

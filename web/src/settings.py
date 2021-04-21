@@ -42,6 +42,8 @@ API_KEY = os.environ.get('API_KEY')
 HEALTH_CHECK_URL = os.environ.get('HEALTH_CHECK_URL')
 
 INSTALLED_APPS = [
+    'channels',
+    'chat',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -117,6 +119,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'src.wsgi.application'
 ASGI_APPLICATION = 'src.asgi.application'
+REDIS_HOST = 'redis'
+REDIS_PORT = 6379
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [(REDIS_HOST, REDIS_PORT)],
+        },
+    },
+}
 
 DATABASES = {
     "default": {
